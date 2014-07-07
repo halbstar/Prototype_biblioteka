@@ -1,0 +1,339 @@
+<!doctype html>
+<html>
+<head>
+    <title>Osoba ili student</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+    body{
+        font-family: verdana;
+        background-color: #f0f0e0;
+        width: 100%;
+        margin:auto;
+    }
+    table{
+        width: 100%;
+        color: white;
+        border-collapse: collapse;
+        border-top: thick double green;
+        
+    }
+    td{
+        min-width:100px;
+        width: 50%;
+        border-top: thick double  black;
+        text-align: center;
+
+
+
+    }
+    section{
+        overflow: auto;
+        border-collapse: collapse;
+        color: white;
+        width: 50%;
+        height: 300px;
+    }
+    section#levo{
+        float: left;
+        
+        background-color: #29526D;
+    }
+    section#desno{
+        float: right;
+        background-color: #659933;
+
+    }
+    nav, footer, aside{
+        clear: both;
+        width:100%;
+        height:50px;
+        background: #AA5639;
+    }
+    footer{
+        height: auto;
+        text-align: center;
+        color: white;
+    }
+    aside{
+        height: auto;
+        background-color: #c0c0b0;
+    }
+    aside table{
+        margin: auto;
+        width: 50%;
+    }
+    h1,h2{
+        text-align: center;
+    }
+    h2,header{
+        background-color: black;
+        opacity: 0.6;
+        color: white;
+    }
+    p{
+        padding: 5px;
+        margin: 0;
+    }
+    form{
+        position: relative;
+        width: 60%;
+        top:10%;
+        left:50%;
+        margin-left: -210px;
+    }
+    input{
+        text-align: center;
+        width: 420px;
+        height: 25px;
+        border-radius: 10px;
+    }
+    button{
+        width:100%;
+        color: white;
+        background-color: #888;
+        text-align: justify;
+    }
+    #button{
+        width:30px;
+        height: 30px;
+    }
+    #footWrap {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9px;
+	margin: auto;
+	height: auto;
+	width: 50%;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Osoba ili student</h1>
+    </header>
+    <nav>
+        <form action="" >
+            <input type="text" id="input" placeholder="Uneti : JMBG, Ime, Prezime (+ za studente - index i prosečna ocena)" >
+            <input type="button" id="button" value="+" onclick="inputText()">
+        </form>
+    </nav>
+    <section id="levo">
+        <div><h2>Osobe</h2></div>
+        
+    </section>
+    <section id="desno">
+        <div><h2>Studenti</h2></div>
+        
+    </section>
+    <aside>
+    <table width="200" border="1">
+        <caption><h3>Test tabela</h3>Pritisni da bi automatski napunio input</caption>
+  <tr>
+    <td>Osoba</td>
+    <td><button  onclick='fillInput(this)'>1407976710382, Marko, Pejić</button></td>
+  </tr>
+  <tr>
+    <td>Student</td>
+    <td><button  onclick='fillInput(this)'>1208976710381, Nenad, Tadić, 1501, 8.02</button></td>
+  </tr>
+  <tr>
+    <td>Student (Studentkinja)</td>
+    <td><button  onclick='fillInput(this)'>1506976710383, Marija, Tralalija, 1501, 10</button></td>
+  </tr>
+  <tr>
+    <td>Greška unosa</td>
+    <td><button  onclick='fillInput(this)'>1,2,3,4</td>
+  </tr>
+  <tr>
+    <td>Greška JMBG-a</td>
+    <td><button  onclick='fillInput(this)'>150697713840, Kuda, Sada, 1501, 8.02</button></td>
+  </tr>
+</table>
+
+    </aside>
+    <footer>
+      <div id="footWrap">
+        <p>Pozdrav dragi predavači.</p>
+        <p>Evo još jedne minijaturne aplikacije, koja je krenula po propozicijama zadatka, a zatim se ponovo, iz čistog hakovanja razvila u malu aplikaciju. Kod za klase nalazi se na 248. liniji (skroz na dnu), a klase se pozivaju automatski kroz aplikaciju (funkcije koje počinju na 166 liniji). 
+        </p>
+        <p>Nadam se da sam dobro odradio nasleđivanje, jer o tome nije bilo reči u lekciji.</p>
+
+        <p>Ponovo vrlo loše izgleda u IE8:(</p>
+        <p>Veliki pozdrav, do jQuery-a.</p>
+      </div>
+    </footer>
+ 
+</body>
+<script type="text/javascript">
+
+///OBRADA UNOSA////
+    /*
+    *obradjuje objekat osoba, i vraca id diva u koji treba da bude smesten
+    *@param   object   instance of Osoba/Student
+    *@return  string   
+
+    */
+    function uKojiDiv(osoba)
+    {
+        if(osoba instanceof Student)
+        {
+            return "desno";
+        }
+        else
+        {
+            return "levo";
+        }
+    }
+    
+    function inputText()
+    {
+        //preuzimanje text iz input polja
+        var input = document.getElementById("input").value;
+        //instanciranje klase Osoba. U zavisnosti od broja unetih elemenata instancira se Osoba ili Student.
+        osoba = obradiInput(input);
+        //odlucujemo na koju stranu upisujemo Osobu
+        var divText = document.createElement("div");
+        divText.innerHTML = (osoba.izreciPozdrav()+osoba.tabla()+"<hr>");
+        document.getElementById(uKojiDiv(osoba)).appendChild(divText);
+
+    }
+    //funkcija resava problem inicijalizovanja klase, kada su argumenti dati u formi niza
+    //funkcija preuzeta sa http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
+    function construct(constructor, args) 
+    {
+        function F() 
+        {
+            return constructor.apply(this, args);
+        }
+        F.prototype = constructor.prototype;
+        return new F();
+    }
+    /*
+    *OBRADA INPUTA
+    *
+    *ako input ima 5 parametara, napravice se instanca klase Student
+    *ako ima 5 parametara, instanca klase Osoba
+    *za svaki drugi broj prijavice gresku
+    *
+    *@param    array    obj
+    *@return   object   instance of Osoba or Student
+    */
+    function obradiInput(obj)
+    {
+        var inputArr =  obj.split(",")
+        var countArr = inputArr.length
+        var st = []
+        for(i in inputArr){
+            st.push(inputArr[i].trim());
+        }
+        inputArr = st;
+        console.log(inputArr)
+        if(countArr==3)
+        {
+            return construct(Osoba,inputArr);
+        }
+        else if(countArr==5)
+        {
+            return construct(Student,inputArr);
+        }
+        else
+        {
+            return alert("Niste uneli odgovarajući broj podataka");
+        };
+    };
+
+    function fillInput(obj)
+    {
+        document.getElementById('input').value = obj.innerHTML
+    }
+
+
+
+//////////////////KLASA OSOBA/////////////////
+
+    //Kostruktor za klasu Osoba
+    function Osoba(jmbg, ime, prezime)
+    {
+        if(this.jmbgProvera(jmbg)){
+            this.jmbg    = jmbg;    
+        }
+        else
+        {
+            return alert("JMBG broj nije pravilno unet. Proverite! Objekat nije inicijalizovan");
+        }
+        
+        this.ime     = ime;
+        this.prezime = prezime;
+        this.map     = {"Ime": this.ime, "Prezime":this.prezime, "jmbg":this.jmbg};
+        
+    };
+    
+    //metod pozdrav prilikom unosa podataka
+    Osoba.prototype.izreciPozdrav = function izreciPozdrav()
+    {
+        return ("<p>Draga osobo "+this.prezime+" "+this.ime+"<br><strong>Dobro došli!</strong></p><p>Vaše podatke možete pogledati u sledećoj tabeli:</p>");
+    };
+    //ispis unetih podataka u obliku table
+    Osoba.prototype.tabla = function tabla()
+    {
+        tableData="<table>";
+        tableData += "<tr>";
+        for(var index in this.map) 
+        {
+            tableData += ( "<th>"+index +"</th>");
+        };
+        tableData +="</tr><tr>";
+        
+        for(var index in this.map) 
+        {
+
+            tableData += ( "<td>"+this.map[index] +"</td>");
+        }
+        tableData += "</tr></table>";
+        return tableData;
+    }
+    //validacija JMBG-a. Preuzeto iz mog Assignmenta - Validacija iz predmeta JavaScript
+    Osoba.prototype.jmbgProvera = function jmbgProvera(obj)
+    {
+        //RegEx koji proverava validnost datuma{(dan 1-31)(mesec 1-12)(godina 1900-2099) i geografske lokacije (samo Srbija (sa Vojvodinom i Kosovom)
+        var re= new RegExp(/^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])([09][0-9][0-9])(0[789]|7[1-9]|8[0-9]|9[1-9])[0-9]{4}$/);
+        obj = parseInt(obj)
+        return !(!re.exec(obj)|| obj==null || obj=="")
+    }
+
+/////KLASA STUDENT KOJA NASLEDJUJE KLASU OSOBA//////////////
+
+    // Definisemo Student konstruktor
+    function Student(jmbg, ime, prezime, brojIndexa, prosecnaOcena) 
+    {
+        //Pozivamo "roditeljski" konstruktor, koristeci Function#call
+      
+        Osoba.call(this, jmbg, ime, prezime);    
+        // Inicijalizujemo atribute specificne za Student-a 
+        this.brojIndexa    = brojIndexa;
+        this.prosecnaOcena = prosecnaOcena;
+        this.map["Broj indeksa"] = this.brojIndexa;
+        this.map["Prosečna ocena"] = this.prosecnaOcena;
+    };
+
+    // Pravimo Student.prototype objekt koji nasledjuje Osoba.prototype.
+    Student.prototype = Object.create(Osoba.prototype); 
+    // Postavljamo konstruktorske atribute da referenciraju na Student
+    Student.prototype.constructor = Student;
+
+    //zamenjujemo metod izreciPozdrav() za prilagodjeniji
+    //primenjena je jednostavna metoda razlikovanja polova - po zavrsnom slovu imena.
+    Student.prototype.izreciPozdrav = function izreciPozdrav()
+    {
+        var text = "<p>Svoje podatke možeš pogledati u sledećoj tabeli:</p>"
+        if(this.ime.slice(-1)=="a")
+        {
+            return("<p>Draga koleginice "+this.prezime+" "+this.ime+"<br><strong>Dobro došla!</strong></p>"+text);
+        }
+        else
+        {
+            return("<p>Dragi kolega "+this.prezime+" "+this.ime+"<br><strong>Dobro došao!</strong></p>"+text);
+        };
+    };
+
+</script>
+</html>
